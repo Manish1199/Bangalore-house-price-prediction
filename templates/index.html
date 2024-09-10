@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Features Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('C:\Projects\Benglore House Predictions\property.jpg'); /* Add the path to your image here */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form-container {
+            background-color: rgba(255, 255, 255, 0.9); /* Add transparency to see the background image */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-container label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-container select, .form-container input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .form-container input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .form-container input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .result-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Property Features Form</h2>
+        <form id="propertyForm">
+            <!-- Balcony Dropdown -->
+            <label for="balcony">Balcony:</label>
+            <select id="balcony" name="balcony">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+            </select>
+
+            <!-- Total Square Feet Input -->
+            <label for="totalSqft">Total Square Feet:</label>
+            <input type="text" id="totalSqft" name="totalSqft">
+
+            <!-- BHK Dropdown -->
+            <label for="bhk">BHK:</label>
+            <select id="bhk" name="bhk">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+
+            <!-- Location Dropdown -->
+            <label for="location">Location:</label>
+            <select id="location" name="location">
+                {% for location in locations %}
+                    <option value="{{ location }}">{{ location }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- Bathroom Dropdown -->
+            <label for="bathroom">Bathrooms:</label>
+            <select id="bathroom" name="bathroom">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+            </select>
+
+            <!-- Submit Button -->
+            <input type="submit" value="Predict">
+        </form>
+        <div class="result-container" id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('propertyForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch('/predict', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultContainer = document.getElementById('result');
+                if (data.error) {
+                    resultContainer.innerHTML = `<p style="color:red;">${data.error}</p>`;
+                } else {
+                    resultContainer.innerHTML = `<p>Predicted house Price: ${data.prediction}</p>`;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
